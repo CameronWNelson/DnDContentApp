@@ -24,7 +24,7 @@ import java.sql.SQLException;
 
 public class SpellDatabase
 {
-    private ArrayList<JsonSpell> spells = new ArrayList<JsonSpell>();
+    private ArrayList<Spell> spells = new ArrayList<Spell>();
 
     public SpellDatabase()
     {
@@ -52,6 +52,11 @@ public class SpellDatabase
         
     }
 
+    public void insertSpellIntoDatabase(Spell spell)
+    {
+        
+    }
+
     public void printSpells()
     {
         if(spells.size() == 0)
@@ -76,20 +81,20 @@ public class SpellDatabase
         // Only gets the first spell, change end condition to spellIndices.length to get all spells
         for(int i = 0; i < 1; i++) 
         {
-            JsonSpell spell = getSpell(spellIndices[i]);
+            Spell spell = getSpell(spellIndices[i]);
             spells.add(spell);
         }
     }
 
-    public static JsonSpell getSpell(String index)
+    public static Spell getSpell(String index)
     {
         return parseJson(fetchSpell(index));
     }
 
-    public static JsonSpell parseJson(String jsonString)
+    public static Spell parseJson(String jsonString)
     {
         Gson gson = new Gson();        
-        JsonSpell newSpell = gson.fromJson(jsonString, JsonSpell.class);
+        Spell newSpell = gson.fromJson(jsonString, Spell.class);
         newSpell.finalize();
         return newSpell;
     }
@@ -121,10 +126,10 @@ public class SpellDatabase
             }
         } catch(MalformedURLException e)
         {
-
+            System.err.println("Malformed URL exception. This should never happen as I write the URLs.");
         } catch(IOException e)
         {
-
+            System.err.println("API fetch failed.");
         }
 
         //System.out.println("Obtained JSON: " + sb.toString());

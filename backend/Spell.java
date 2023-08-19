@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 
 
-public class JsonSpell implements Comparable<JsonSpell>
+public class Spell implements Comparable<Spell>
 {
     private String index;
     private String name;
@@ -115,7 +115,7 @@ public class JsonSpell implements Comparable<JsonSpell>
 
     //*/
     @Override
-    public int compareTo(JsonSpell other)
+    public int compareTo(Spell other)
     {
         if(this.level < other.level)
         {
