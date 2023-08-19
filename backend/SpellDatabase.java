@@ -74,7 +74,7 @@ public class SpellDatabase
         String[] spellIndices = fetchAllSpellsIndices();
         
         // Only gets the fist 5 spells, change end condition to spellIndices.length to get all spells
-        for(int i = 0; i < spellIndices.length; i++) 
+        for(int i = 0; i < 5; i++) 
         {
             JsonSpell spell = getSpell(spellIndices[i]);
             spells.add(spell);
