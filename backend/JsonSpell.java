@@ -31,7 +31,7 @@ public class JsonSpell implements Comparable<JsonSpell>
     
     public void finalize()
     {
-        spellText = desc[0] + "\n" + higher_level[0];
+        spellText = desc[0] + "\nAt Higher Levels: " + higher_level[0];
         classNames = new String[classes.length];
         for(int i = 0; i < classes.length; i++)
         {

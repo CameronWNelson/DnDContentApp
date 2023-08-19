@@ -12,38 +12,44 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.Statement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public class SpellDatabase
 {
     //private ArrayList<Spell> spells = new ArrayList<Spell>();
 
     public SpellDatabase()
     {
+        try{
+            //To-Do: Set database url based on argument maybe?
+            Connection connection = DriverManager.getConnection("jdbc:sqlite:C:/Users/alexa/Documents/GitHub/DnDContentApp/backend/spelldatabase.db");
+            Statement statement = connection.createStatement();
+            statement.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, username TEXT, email TEXT)");
+            //statement.execute("INSERT INTO users (username, email) VALUES ('john_doe', 'john@example.com')");
+
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM users");
+            while(resultSet.next())
+            {
+                int id = resultSet.getInt("id");
+                String username = resultSet.getString("username");
+                String email = resultSet.getString("email");
+
+                System.out.println(id + " " + username + " " + email);
+            }
+
+        } catch(SQLException e)
+        {
+
+        }
         
     }
 
-    /*
-    public void addSpell(Spell spell)
-    {
-        spells.add(spell);
-    }
-
-    /* 
-    public String writeDatabaseToJSON()
-    {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{\"Spells\":[");
-        if(spells.size() != 0)
-        { 
-            sb.append(spells.get(0).toJSON());
-            for(int i = 1; i < spells.size(); i++)
-            {
-                sb.append(",");
-                sb.append(spells.get(i).toJSON());
-            }
-        }
-        sb.append("]}");
-        return sb.toString();
-    } //*/
+    
     public static void main(String[] args)
     {
         SpellDatabase sd = new SpellDatabase();
