@@ -50,7 +50,7 @@ public class JsonSpell implements Comparable<JsonSpell>
         spellText = sb.toString();
         if(higher_level.length != 0)
         {
-            spellText += "\nAt Higher Levels: " + higher_level[0];
+            spellText += "\n\nAt Higher Levels: " + higher_level[0];
         }
         classNames = new String[classes.length];
         for(int i = 0; i < classes.length; i++)

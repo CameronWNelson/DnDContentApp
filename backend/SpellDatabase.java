@@ -72,7 +72,9 @@ public class SpellDatabase
     public void populateWithSpells()
     {
         String[] spellIndices = fetchAllSpellsIndices();
-        for(int i = 0; i < spellIndices.length; i++)
+        
+        // Only gets the fist 5 spells, change end condition to spellIndices.length to get all spells
+        for(int i = 0; i < spellIndices.length; i++) 
         {
             JsonSpell spell = getSpell(spellIndices[i]);
             spells.add(spell);
