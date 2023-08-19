@@ -27,17 +27,37 @@ public class JsonSpell implements Comparable<JsonSpell>
     private String spellText;
     private String[] classNames;
     private String componentsText;
+    private String spellLevelText;
 
     
     public void finalize()
     {
-        spellText = desc[0] + "\nAt Higher Levels: " + higher_level[0];
+        StringBuilder sb = new StringBuilder();
+        sb.append(getOrdinalNumber(level));
+        sb.append("-level");
+        if(ritual)
+        {
+            sb.append(" (Ritual)");
+        }
+        spellLevelText = sb.toString();
+        sb = new StringBuilder();
+        sb.append(desc[0]);
+        for(int i = 1; i < desc.length; i++)
+        {
+            sb.append("\n\n");
+            sb.append(desc[i]);
+        }
+        spellText = sb.toString();
+        if(higher_level.length != 0)
+        {
+            spellText += "\nAt Higher Levels: " + higher_level[0];
+        }
         classNames = new String[classes.length];
         for(int i = 0; i < classes.length; i++)
         {
             classNames[i] = classes[i].getName();
         }
-        StringBuilder sb = new StringBuilder();
+        sb = new StringBuilder();
         for(int i = 0; i < components.length; i++)
         {
             sb.append(components[i]);
@@ -47,6 +67,7 @@ public class JsonSpell implements Comparable<JsonSpell>
         {
             sb.append(" (");
             sb.append(material);
+            sb.deleteCharAt(sb.length() - 1);
             sb.append(")");
         }
         componentsText = sb.toString();
@@ -58,9 +79,7 @@ public class JsonSpell implements Comparable<JsonSpell>
         StringBuilder sb = new StringBuilder();
         sb.append(this.name);
         sb.append("\n");
-        sb.append(getOrdinalNumber(this.level));
-        sb.append("-level ");
-        sb.append(this.school.getName());
+        sb.append(this.spellLevelText);
         sb.append("\n");
         sb.append("Casting Time: ");
         sb.append(this.casting_time);
