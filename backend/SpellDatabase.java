@@ -56,7 +56,7 @@ public class SpellDatabase
     {
         if(spells.size() == 0)
         {
-            System.out.println("Please populate with spells first.");
+            System.out.println("Printing spells failed. Please populate with spells first.");
             return;
         }
         StringBuilder sb = new StringBuilder();
@@ -71,10 +71,10 @@ public class SpellDatabase
 
     public void populateWithSpells()
     {
-        String[] spellIndices = fetchAllSpellsIndices();
+        String[] spellIndices = fetchAllSpellIndices();
         
-        // Only gets the fist 5 spells, change end condition to spellIndices.length to get all spells
-        for(int i = 0; i < 5; i++) 
+        // Only gets the first spell, change end condition to spellIndices.length to get all spells
+        for(int i = 0; i < 1; i++) 
         {
             JsonSpell spell = getSpell(spellIndices[i]);
             spells.add(spell);
@@ -100,15 +100,15 @@ public class SpellDatabase
         try{
             String urlText = "https://www.dnd5eapi.co/api/spells/" + index;
             URL url = new URL(urlText);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
 
-            int responseCode = conn.getResponseCode();
-            System.out.println("Response Code: " + responseCode);
+            int responseCode = connection.getResponseCode();
+            //System.out.println("Response Code: " + responseCode);
 
             if(responseCode == HttpURLConnection.HTTP_OK)
             {
-                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 String line;
                 
                 sb = new StringBuilder();
@@ -117,7 +117,7 @@ public class SpellDatabase
                     sb.append(line);
                 }
                 in.close();
-                conn.disconnect();
+                connection.disconnect();
             }
         } catch(MalformedURLException e)
         {
@@ -127,11 +127,11 @@ public class SpellDatabase
 
         }
 
-        System.out.println("Obtained JSON: " + sb.toString());
+        //System.out.println("Obtained JSON: " + sb.toString());
         return sb.toString();
     }
 
-    public static String[] fetchAllSpellsIndices()
+    public static String[] fetchAllSpellIndices()
     {
         StringBuilder sb = new StringBuilder();
         try{
@@ -141,7 +141,7 @@ public class SpellDatabase
             conn.setRequestMethod("GET");
 
             int responseCode = conn.getResponseCode();
-            System.out.println("Response Code: " + responseCode);
+            //System.out.println("Response Code: " + responseCode);
 
             if(responseCode == HttpURLConnection.HTTP_OK)
             {
@@ -183,7 +183,7 @@ public class SpellDatabase
         SpellDatabase sd = new SpellDatabase();
 
         //PLEASE BE CAREFUL WITH CALLING THIS AS IT RESULTS IN 320 API CALLS
-        //sd.populateWithSpells();
+        sd.populateWithSpells();
         
         sd.printSpells();
 

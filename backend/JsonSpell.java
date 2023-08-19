@@ -34,7 +34,8 @@ public class JsonSpell implements Comparable<JsonSpell>
     {
         StringBuilder sb = new StringBuilder();
         sb.append(getOrdinalNumber(level));
-        sb.append("-level");
+        sb.append("-level ");
+        sb.append(school.getName());
         if(ritual)
         {
             sb.append(" (Ritual)");
@@ -111,41 +112,6 @@ public class JsonSpell implements Comparable<JsonSpell>
         return sb.toString();
     }
 
-    public String toJSON()
-    {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{");
-        sb.append("\"Name\":\"");
-        sb.append(this.name);
-        sb.append("\",\n\"Level\":");
-        sb.append(this.level);
-        sb.append(",\n\"School\":\"");
-        sb.append(this.school);
-        sb.append("\",\n\"CastingTime\":\"");
-        sb.append(this.casting_time);
-        sb.append("\",\n\"Range\":\"");
-        sb.append(this.range);
-        sb.append("\",\n\"Components\":\"");
-        sb.append(this.componentsText);
-        sb.append("\",\n\"Duration\":\"");
-        sb.append(this.duration);
-        sb.append("\",\n\"Concentration\":");
-        sb.append(String.valueOf(this.concentration));
-        sb.append(",\n\"Classes\":[\"");
-        sb.append(classNames[0]);
-        sb.append("\"");
-        for(int i = 1; i < classNames.length; i++)
-        {
-            sb.append(",\"");
-            sb.append(classNames[i]);
-            sb.append("\"");
-        }
-        sb.append("],\n\"SpellText\":\"");
-        sb.append(this.spellText);
-        sb.append("\"\n}");
-
-        return sb.toString();
-    }
 
     //*/
     @Override
