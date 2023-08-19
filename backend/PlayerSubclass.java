@@ -1,4 +1,4 @@
-public class PlayerClass {
+public class PlayerSubclass {
     private String name;
 
     public String getName()

@@ -1,22 +1,8 @@
-public enum School {
-    ABJURATION("Abjuration"),
-    CONJURATION("Conjuration"),
-    DIVINATION("Divination"),
-    ENCHANTMENT("Enchantment"),
-    EVOCATION("Evocation"),
-    ILLUSION("Illusion"),
-    NECROMANCY("Necromancy"),
-    TRANSMUTATION("Transmutation");
+public class School {
+    private String name;
 
-    private String school;
-
-    School(String school)
+    public String getName()
     {
-        this.school = school;
-    }
-
-    public String getSchoolName()
-    {
-        return this.school;
+        return name;
     }
 }
