@@ -1,17 +1,17 @@
 public class SpellToJson
 {
-    private String name;
-    private int level;
-    private String school;
-    private boolean ritual;
-    private boolean concentration;
-    private Components components;
-    private String range;
-    private String duration;
-    private String castTime;
-    private String spellText;
-    private String classes;
-    private String subclasses;
+    public String name;
+    public int level;
+    public String school;
+    public boolean ritual;
+    public boolean concentration;
+    public Components components;
+    public String range;
+    public String duration;
+    public String castTime;
+    public String spellText;
+    public String classes;
+    public String subclasses;
 
     public SpellToJson(Spell spell)
     {
