@@ -13,7 +13,7 @@ public class Spell implements Comparable<Spell>
     private String[] higher_level;
     private String range;
     private String[] components;
-    private String material;
+    private String material = "";
     private boolean ritual;
     private String duration;
     private boolean concentration;
@@ -21,6 +21,7 @@ public class Spell implements Comparable<Spell>
     private int level;
 
     private PlayerClass[] classes;
+    private PlayerSubclass[] subclasses;
     private School school;
 
 
@@ -29,6 +30,93 @@ public class Spell implements Comparable<Spell>
     private String componentsText;
     private String spellLevelText;
 
+    public String getName()
+    {
+        return this.name;
+    }
+
+    public int getLevel()
+    {
+        return this.level;
+    }
+
+    public String getSchool()
+    {
+        return this.school.getName();
+    }
+
+    public boolean isRitual()
+    {
+        return this.ritual;
+    }
+
+    public boolean isConcentration()
+    {
+        return this.concentration;
+    }
+
+    public Components getComponents()
+    {
+        return new Components(components, material);
+    }
+
+    public String getRange()
+    {
+        return this.range;
+    }
+
+    public String getDuration()
+    {
+        return this.duration;
+    }
+
+    public String getCastTime()
+    {
+        return this.casting_time;
+    }
+
+    public String getSpellText()
+    {
+        return this.spellText;
+    }
+
+    public String getClasses()
+    {
+        if(this.classes.length == 0)
+        {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.classes[0]);
+        for(int i = 1; i < this.classes.length; i++)
+        {
+            sb.append(", ");
+            sb.append(this.classes[i].getName());
+        }
+        return sb.toString();
+        
+    }
+
+    public String getSubclasses()
+    {
+        if(this.subclasses.length == 0)
+        {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.subclasses[0]);
+        for(int i = 1; i < this.subclasses.length; i++)
+        {
+            sb.append(", ");
+            sb.append(this.subclasses[i].getName());
+        }
+        return sb.toString();
+    }
+
+    public SpellToJson getSpellToJson()
+    {
+        return new SpellToJson(this);
+    }
     
     public void finalize()
     {
