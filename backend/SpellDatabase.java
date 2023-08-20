@@ -33,7 +33,7 @@ public class SpellDatabase
             //To-Do: Set database url based on argument maybe?
             connection = DriverManager.getConnection("jdbc:sqlite:spelldatabase.db");
             Statement statement = connection.createStatement();
-            statement.execute("Create TABLE IF NOT EXISTS spells(id INTEGER PRIMARY KEY, name TEXT, level INTEGER, school TEXT, ritual BOOLEAN, concentration BOOLEAN, verbal BOOLEAN, somatic BOOLEAN, material BOOLEAN, materialText TEXT DEFAULT '', range TEXT, duration TEXT, castTime TEXT, spellText TEXT, classes TEXT, subclasses TEXT)");
+            statement.execute("CREATE TABLE IF NOT EXISTS spells(id INTEGER PRIMARY KEY, name TEXT, level INTEGER, school TEXT, ritual BOOLEAN, concentration BOOLEAN, verbal BOOLEAN, somatic BOOLEAN, material BOOLEAN, materialText TEXT, range TEXT, duration TEXT, castTime TEXT, spellText TEXT, classes TEXT, subclasses TEXT)");
 
             // ResultSet resultSet = statement.executeQuery("SELECT * FROM users");
             // while(resultSet.next())
@@ -62,7 +62,7 @@ public class SpellDatabase
     {
         TableEntrySpell dbSpell = spell.getTableEntrySpell();
 
-        String input = String.format("INSERT INTO spells (name, level, school, ritual, concentration, verbal, somatic, material, materialText, range, duration, castTime, spellText, classes, subclasses) VALUES (%s, %d, %s, %b, %b, %b, %b, %b, '%s', '%s', '%s', '%s', '%s', '%s', '%s')", 
+        String input = String.format("INSERT INTO spells (name, level, school, ritual, concentration, verbal, somatic, material, materialText, range, duration, castTime, spellText, classes, subclasses) VALUES (\"%s\", %d, \"%s\", %b, %b, %b, %b, %b, \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\")", 
         dbSpell.name, dbSpell.level, dbSpell.school, dbSpell.ritual, dbSpell.concentration, dbSpell.components.hasVerbalComponents(), dbSpell.components.hasSomaticComponents(), dbSpell.components.hasMaterialComponents(), dbSpell.components.getMaterialComponentsText(), dbSpell.range, dbSpell.duration, dbSpell.castTime, dbSpell.spellText, dbSpell.classes, dbSpell.subclasses);
         try
         {
@@ -235,8 +235,6 @@ public class SpellDatabase
             sd.emptyDatabase();
             sd.populateWithSpells();
         }
-
-        
 
         
     
