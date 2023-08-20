@@ -1,6 +1,6 @@
 import java.lang.StringBuilder;
 import java.util.ArrayList;
-
+import java.util.Arrays;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -52,6 +52,11 @@ public class SpellDatabase
         
     }
 
+    public void emptyDatabase()
+    {
+        //write me
+    }
+
     // SQL query to insert a spell object into the database
     public void insertSpellIntoDatabase(Spell spell)
     {
@@ -85,6 +90,8 @@ public class SpellDatabase
         {
             System.err.println("Unable to access database. Read failed.");
         }
+
+
         if(spells.size() == 0)
         {
             System.out.println("Printing spells failed. Please populate with spells first.");
@@ -221,8 +228,18 @@ public class SpellDatabase
     {
         SpellDatabase sd = new SpellDatabase();
 
-        //PLEASE BE CAREFUL WITH CALLING THIS AS IT RESULTS IN 320 API CALLS
-        sd.populateWithSpells();
+        // Reset database to original state
+        //PLEASE BE CAREFUL WITH CALLING populateWithSpells() AS IT RESULTS IN 320 API CALLS
+        if(Arrays.asList(args).contains("-r"))
+        {
+            sd.emptyDatabase();
+            sd.populateWithSpells();
+        }
+
+        
+
+        
+    
         
         // sd.printSpells();
 
