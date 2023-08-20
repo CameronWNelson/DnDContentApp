@@ -25,12 +25,13 @@ import java.sql.SQLException;
 public class SpellDatabase
 {
     private ArrayList<Spell> spells = new ArrayList<Spell>();
+    Connection connection;
 
     public SpellDatabase()
     {
         try{
             //To-Do: Set database url based on argument maybe?
-            Connection connection = DriverManager.getConnection("jdbc:sqlite:C:/Users/alexa/Documents/GitHub/DnDContentApp/backend/spelldatabase.db");
+            connection = DriverManager.getConnection("jdbc:sqlite:spelldatabase.db");
             Statement statement = connection.createStatement();
             statement.execute("Create TABLE IF NOT EXISTS spells(id INTEGER PRIMARY KEY, name TEXT, level INTEGER, school TEXT, ritual BOOLEAN, concentration BOOLEAN, verbal BOOLEAN, somatic BOOLEAN, material BOOLEAN, materialText TEXT DEFAULT '', range TEXT, duration TEXT, castTime TEXT, spellText TEXT, classes TEXT, subclasses TEXT)");
 
@@ -58,8 +59,15 @@ public class SpellDatabase
 
         String input = String.format("INSERT INTO spells (name, level, school, ritual, concentration, verbal, somatic, material, materialText, range, duration, castTime, spellText, classes, subclasses) VALUES (%s, %d, %s, %b, %b, %b, %b, %b, '%s', '%s', '%s', '%s', '%s', '%s', '%s')", 
         dbSpell.name, dbSpell.level, dbSpell.school, dbSpell.ritual, dbSpell.concentration, dbSpell.components.hasVerbalComponents(), dbSpell.components.hasSomaticComponents(), dbSpell.components.hasMaterialComponents(), dbSpell.components.getMaterialComponentsText(), dbSpell.range, dbSpell.duration, dbSpell.castTime, dbSpell.spellText, dbSpell.classes, dbSpell.subclasses);
-    
-        statement.execute(input);
+        try
+        {
+            Statement statement = connection.createStatement();
+            statement.execute(input);
+        } catch(SQLException e)
+        {
+            System.err.println("Unable to access database.");
+        }
+        
     }
 
     public void printSpells()
