@@ -35,15 +35,15 @@ public class SpellDatabase
             Statement statement = connection.createStatement();
             statement.execute("Create TABLE IF NOT EXISTS spells(id INTEGER PRIMARY KEY, name TEXT, level INTEGER, school TEXT, ritual BOOLEAN, concentration BOOLEAN, verbal BOOLEAN, somatic BOOLEAN, material BOOLEAN, materialText TEXT DEFAULT '', range TEXT, duration TEXT, castTime TEXT, spellText TEXT, classes TEXT, subclasses TEXT)");
 
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM users");
-            while(resultSet.next())
-            {
-                int id = resultSet.getInt("id");
-                String username = resultSet.getString("username");
-                String email = resultSet.getString("email");
+            // ResultSet resultSet = statement.executeQuery("SELECT * FROM users");
+            // while(resultSet.next())
+            // {
+            //     int id = resultSet.getInt("id");
+            //     String username = resultSet.getString("username");
+            //     String email = resultSet.getString("email");
 
-                System.out.println(id + " " + username + " " + email);
-            }
+            //     System.out.println(id + " " + username + " " + email);
+            // }
 
         } catch(SQLException e)
         {
@@ -72,6 +72,14 @@ public class SpellDatabase
 
     public void printSpells()
     {
+        try 
+        {
+            ResultSet resultSet = connection.createStatement().executeQuery("SELECT * FROM spells");
+            //TODO: Print database entries
+        } catch(SQLException e)
+        {
+            System.err.println("Unable to access database.");
+        }
         if(spells.size() == 0)
         {
             System.out.println("Printing spells failed. Please populate with spells first.");
@@ -95,7 +103,7 @@ public class SpellDatabase
         for(int i = 0; i < 1; i++) 
         {
             Spell spell = getSpell(spellIndices[i]);
-            spells.add(spell);
+            insertSpellIntoDatabase(spell);
         }
     }
 
@@ -200,7 +208,7 @@ public class SpellDatabase
         SpellDatabase sd = new SpellDatabase();
 
         //PLEASE BE CAREFUL WITH CALLING THIS AS IT RESULTS IN 320 API CALLS
-        // sd.populateWithSpells();
+        sd.populateWithSpells();
         
         // sd.printSpells();
 
