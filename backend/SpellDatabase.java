@@ -29,11 +29,10 @@ public class SpellDatabase
 
     public SpellDatabase()
     {
-        try{
+        try {
             //To-Do: Set database url based on argument maybe?
             connection = DriverManager.getConnection("jdbc:sqlite:spelldatabase.db");
-            Statement statement = connection.createStatement();
-            statement.execute("CREATE TABLE IF NOT EXISTS spells(id INTEGER PRIMARY KEY, name TEXT, level INTEGER, school TEXT, ritual BOOLEAN, concentration BOOLEAN, verbal BOOLEAN, somatic BOOLEAN, material BOOLEAN, materialText TEXT, range TEXT, duration TEXT, castTime TEXT, spellText TEXT, classes TEXT, subclasses TEXT)");
+            createDatabase();
 
             // ResultSet resultSet = statement.executeQuery("SELECT * FROM users");
             // while(resultSet.next())
@@ -45,16 +44,36 @@ public class SpellDatabase
             //     System.out.println(id + " " + username + " " + email);
             // }
 
-        } catch(SQLException e)
+        } 
+        catch(SQLException e)
         {
             System.err.println("Caught SQLException");
         }
-        
     }
 
+    // Remove all the data from the database and leave an empty table
     public void emptyDatabase()
     {
-        //write me
+        try {
+            Statement statement = connection.createStatement();
+            statement.execute("DROP TABLE spells");
+            createDatabase();
+        } 
+        catch(SQLException e) {
+            System.err.println("Caught SQLException in drop table");
+        }
+    }
+
+    // Create the table for spell data
+    public void createDatabase()
+    {
+        try {
+            Statement statement = connection.createStatement();
+            statement.execute("CREATE TABLE IF NOT EXISTS spells(id INTEGER PRIMARY KEY, name TEXT, level INTEGER, school TEXT, ritual BOOLEAN, concentration BOOLEAN, verbal BOOLEAN, somatic BOOLEAN, material BOOLEAN, materialText TEXT, range TEXT, duration TEXT, castTime TEXT, spellText TEXT, classes TEXT, subclasses TEXT)");
+        } 
+        catch(SQLException e) {
+            System.err.println("Caught SQLException on create table");
+        }
     }
 
     // SQL query to insert a spell object into the database
@@ -92,19 +111,19 @@ public class SpellDatabase
         }
 
 
-        if(spells.size() == 0)
-        {
-            System.err.println("Printing spells failed. Please populate with spells first.");
-            return;
-        }
-        StringBuilder sb = new StringBuilder();
-        sb.append(spells.get(0).toString());
-        for(int i = 1; i < spells.size(); i++)
-        {
-            sb.append("\n\n");
-            sb.append(spells.get(i).toString());
-        }
-        System.out.println(sb.toString());
+        // if(spells.size() == 0)
+        // {
+        //     System.err.println("Printing spells failed. Please populate with spells first.");
+        //     return;
+        // }
+        // StringBuilder sb = new StringBuilder();
+        // sb.append(spells.get(0).toString());
+        // for(int i = 1; i < spells.size(); i++)
+        // {
+        //     sb.append("\n\n");
+        //     sb.append(spells.get(i).toString());
+        // }
+        // System.out.println(sb.toString());
     }
 
     // Populate the database with every spell in the SRD
@@ -236,8 +255,6 @@ public class SpellDatabase
             sd.populateWithSpells();
         }
 
-        
-    
         
         // sd.printSpells();
 
