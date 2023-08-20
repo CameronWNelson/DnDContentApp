@@ -32,8 +32,7 @@ public class SpellDatabase
             //To-Do: Set database url based on argument maybe?
             Connection connection = DriverManager.getConnection("jdbc:sqlite:C:/Users/alexa/Documents/GitHub/DnDContentApp/backend/spelldatabase.db");
             Statement statement = connection.createStatement();
-            statement.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, username TEXT, email TEXT)");
-            //statement.execute("INSERT INTO users (username, email) VALUES ('john_doe', 'john@example.com')");
+            statement.execute("Create TABLE IF NOT EXISTS spells(id INTEGER PRIMARY KEY, name TEXT, level INTEGER, school TEXT, ritual BOOLEAN, concentration BOOLEAN, verbal BOOLEAN, somatic BOOLEAN, material BOOLEAN, materialText TEXT DEFAULT '', range TEXT, duration TEXT, castTime TEXT, spellText TEXT, classes TEXT, subclasses TEXT)");
 
             ResultSet resultSet = statement.executeQuery("SELECT * FROM users");
             while(resultSet.next())
@@ -47,14 +46,20 @@ public class SpellDatabase
 
         } catch(SQLException e)
         {
-
+            System.err.println("Caught SQLException");
         }
         
     }
 
+    // SQL query to insert a spell object into the database
     public void insertSpellIntoDatabase(Spell spell)
     {
-        
+        SpellToJson dbSpell = spell.getSpellToJson();
+
+        String input = String.format("INSERT INTO spells (name, level, school, ritual, concentration, verbal, somatic, material, materialText, range, duration, castTime, spellText, classes, subclasses) VALUES (%s, %d, %s, %b, %b, %b, %b, %b, '%s', '%s', '%s', '%s', '%s', '%s', '%s')", 
+        dbSpell.name, dbSpell.level, dbSpell.school, dbSpell.ritual, dbSpell.concentration, dbSpell.components.hasVerbalComponents(), dbSpell.components.hasSomaticComponents(), dbSpell.components.hasMaterialComponents(), dbSpell.components.getMaterialComponentsText(), dbSpell.range, dbSpell.duration, dbSpell.castTime, dbSpell.spellText, dbSpell.classes, dbSpell.subclasses);
+    
+        statement.execute(input);
     }
 
     public void printSpells()
@@ -181,16 +186,15 @@ public class SpellDatabase
 
         return spellIndices;
     }
-
     
     public static void main(String[] args)
     {
         SpellDatabase sd = new SpellDatabase();
 
         //PLEASE BE CAREFUL WITH CALLING THIS AS IT RESULTS IN 320 API CALLS
-        sd.populateWithSpells();
+        // sd.populateWithSpells();
         
-        sd.printSpells();
+        // sd.printSpells();
 
 
         //JsonSpell spell = getSpell("wish");
