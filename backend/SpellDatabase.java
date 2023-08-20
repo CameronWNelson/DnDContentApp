@@ -94,7 +94,7 @@ public class SpellDatabase
 
         if(spells.size() == 0)
         {
-            System.out.println("Printing spells failed. Please populate with spells first.");
+            System.err.println("Printing spells failed. Please populate with spells first.");
             return;
         }
         StringBuilder sb = new StringBuilder();
