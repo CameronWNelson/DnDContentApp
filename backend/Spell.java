@@ -87,7 +87,7 @@ public class Spell implements Comparable<Spell>
             return "";
         }
         StringBuilder sb = new StringBuilder();
-        sb.append(this.classes[0]);
+        sb.append(this.classes[0].getName());
         for(int i = 1; i < this.classes.length; i++)
         {
             sb.append(", ");
@@ -104,7 +104,7 @@ public class Spell implements Comparable<Spell>
             return "";
         }
         StringBuilder sb = new StringBuilder();
-        sb.append(this.subclasses[0]);
+        sb.append(this.subclasses[0].getName());
         for(int i = 1; i < this.subclasses.length; i++)
         {
             sb.append(", ");
@@ -113,9 +113,9 @@ public class Spell implements Comparable<Spell>
         return sb.toString();
     }
 
-    public SpellToJson getSpellToJson()
+    public TableEntrySpell getTableEntrySpell()
     {
-        return new SpellToJson(this);
+        return new TableEntrySpell(this);
     }
     
     public void finalize()

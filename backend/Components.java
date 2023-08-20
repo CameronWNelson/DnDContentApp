@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.lang.StringBuilder;
 
 public class Components
 {
@@ -57,5 +58,25 @@ public class Components
     public String getMaterialComponentsText()
     {
         return this.materialText;
+    }
+
+    public String toString()
+    {
+        StringBuilder sb = new StringBuilder();
+        if(this.verbal)
+        {
+            sb.append("V");
+        }
+        if(this.somatic)
+        {
+            sb.append("S");
+        }
+        if(this.material)
+        {
+            sb.append("M (");
+            sb.append(this.materialText);
+            sb.append(")");
+        }
+        return sb.toString();
     }
 }

@@ -55,7 +55,7 @@ public class SpellDatabase
     // SQL query to insert a spell object into the database
     public void insertSpellIntoDatabase(Spell spell)
     {
-        SpellToJson dbSpell = spell.getSpellToJson();
+        TableEntrySpell dbSpell = spell.getTableEntrySpell();
 
         String input = String.format("INSERT INTO spells (name, level, school, ritual, concentration, verbal, somatic, material, materialText, range, duration, castTime, spellText, classes, subclasses) VALUES (%s, %d, %s, %b, %b, %b, %b, %b, '%s', '%s', '%s', '%s', '%s', '%s', '%s')", 
         dbSpell.name, dbSpell.level, dbSpell.school, dbSpell.ritual, dbSpell.concentration, dbSpell.components.hasVerbalComponents(), dbSpell.components.hasSomaticComponents(), dbSpell.components.hasMaterialComponents(), dbSpell.components.getMaterialComponentsText(), dbSpell.range, dbSpell.duration, dbSpell.castTime, dbSpell.spellText, dbSpell.classes, dbSpell.subclasses);
@@ -65,20 +65,25 @@ public class SpellDatabase
             statement.execute(input);
         } catch(SQLException e)
         {
-            System.err.println("Unable to access database.");
+            System.err.println("Unable to access database. Insert failed.");
         }
         
     }
 
+    // Print every spell in the database
     public void printSpells()
     {
         try 
         {
             ResultSet resultSet = connection.createStatement().executeQuery("SELECT * FROM spells");
+            while(resultSet.next())
+            {
+                System.out.println(resultSet.getString("name"));
+            }
             //TODO: Print database entries
         } catch(SQLException e)
         {
-            System.err.println("Unable to access database.");
+            System.err.println("Unable to access database. Read failed.");
         }
         if(spells.size() == 0)
         {
@@ -95,6 +100,7 @@ public class SpellDatabase
         System.out.println(sb.toString());
     }
 
+    // Populate the database with every spell in the SRD
     public void populateWithSpells()
     {
         String[] spellIndices = fetchAllSpellIndices();
@@ -103,15 +109,20 @@ public class SpellDatabase
         for(int i = 0; i < 1; i++) 
         {
             Spell spell = getSpell(spellIndices[i]);
+            spells.add(spell);
             insertSpellIntoDatabase(spell);
         }
+
+        //System.out.println(spells.get(0).getSpellToJson().toString());
     }
 
+    // Given a spell index, returns a Spell object
     public static Spell getSpell(String index)
     {
         return parseJson(fetchSpell(index));
     }
 
+    // Given a json representation of a spell, returns a Spell object
     public static Spell parseJson(String jsonString)
     {
         Gson gson = new Gson();        
@@ -120,6 +131,7 @@ public class SpellDatabase
         return newSpell;
     }
 
+    // Given a spell index, returns a json representation of a spell
     public static String fetchSpell(String index)
     {
         StringBuilder sb = null;
@@ -157,6 +169,7 @@ public class SpellDatabase
         return sb.toString();
     }
 
+    // Fetch from the SRD API a json containing all spell indices, returns a string array of spell indices
     public static String[] fetchAllSpellIndices()
     {
         StringBuilder sb = new StringBuilder();
@@ -203,6 +216,7 @@ public class SpellDatabase
         return spellIndices;
     }
     
+    // Main method
     public static void main(String[] args)
     {
         SpellDatabase sd = new SpellDatabase();
@@ -213,7 +227,7 @@ public class SpellDatabase
         // sd.printSpells();
 
 
-        //JsonSpell spell = getSpell("wish");
+        //Spell spell = getSpell("wish");
         //System.out.println(spell.toString());
         
         
