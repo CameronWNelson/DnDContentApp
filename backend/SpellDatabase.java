@@ -29,6 +29,7 @@ import com.google.gson.JsonElement;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -38,6 +39,8 @@ public class SpellDatabase
 
     class FileHandler implements HttpHandler
     {
+
+        // Handler for the HTTP Server, sends the spelldatabase.db file when it receives a GET request
         @Override
         public void handle(HttpExchange exchange) throws IOException
         {
@@ -99,6 +102,7 @@ public class SpellDatabase
             Statement statement = connection.createStatement();
             statement.execute("DROP TABLE spells");
             createDatabase();
+            System.out.println("Database successfully emptied.");
         } 
         catch(SQLException e) {
             System.err.println("Caught SQLException in drop table");
@@ -118,19 +122,41 @@ public class SpellDatabase
     }
 
     // SQL query to insert a spell object into the database
-    public void insertSpellIntoDatabase(Spell spell)
+    public boolean insertSpellIntoDatabase(Spell spell)
     {
+        //TODO: Check if spell is already in database before adding
+
         TableEntrySpell dbSpell = spell.getTableEntrySpell();
+
+        String query = "SELECT COUNT(*) FROM spells WHERE name = ?";
+        
+        
 
         String input = String.format("INSERT INTO spells (name, level, school, ritual, concentration, verbal, somatic, material, materialText, range, duration, castTime, spellText, classes, subclasses) VALUES (\"%s\", %d, \"%s\", %b, %b, %b, %b, %b, \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\")", 
         dbSpell.name, dbSpell.level, dbSpell.school, dbSpell.ritual, dbSpell.concentration, dbSpell.components.hasVerbalComponents(), dbSpell.components.hasSomaticComponents(), dbSpell.components.hasMaterialComponents(), dbSpell.components.getMaterialComponentsText(), dbSpell.range, dbSpell.duration, dbSpell.castTime, dbSpell.spellText, dbSpell.classes, dbSpell.subclasses);
         try
         {
+            PreparedStatement queryStatement = connection.prepareStatement((query));
+            queryStatement.setString(1, spell.getName());
+            ResultSet resultSet = queryStatement.executeQuery();
+            if(resultSet.next())
+            {
+                int count = resultSet.getInt(1);
+                if(count > 0)
+                {
+                    System.out.println("Unable to insert spell. Entry with name " + spell.getName() + " already exists.");
+                    return false;
+                }
+            }
+
             Statement statement = connection.createStatement();
             statement.execute(input);
+            System.out.println("Entry with name " + spell.getName() + " inserted successfully.");
+            return true;
         } catch(SQLException e)
         {
             System.err.println("Unable to access database. Insert failed.");
+            return false;
         }
         
     }
@@ -158,7 +184,7 @@ public class SpellDatabase
         String[] spellIndices = fetchAllSpellIndices();
         
         // Only gets the first spell, change end condition to spellIndices.length to get all spells
-        for(int i = 0; i < 1; i++) 
+        for(int i = 0; i < 3; i++) 
         {
             Spell spell = getSpell(spellIndices[i]);
             insertSpellIntoDatabase(spell);
@@ -280,8 +306,9 @@ public class SpellDatabase
             sd.populateWithSpells();
         }
 
-        
-        // sd.printSpells();
+        //sd.emptyDatabase();
+        sd.populateWithSpells();
+        //sd.printSpells();
 
 
         //Spell spell = getSpell("wish");
