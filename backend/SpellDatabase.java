@@ -307,7 +307,7 @@ public class SpellDatabase
         }
 
         //sd.emptyDatabase();
-        sd.populateWithSpells();
+        //sd.populateWithSpells();
         //sd.printSpells();
 
 
