@@ -8,6 +8,17 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import com.sun.net.httpserver.HttpServer;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpServer;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpExchange;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -24,30 +35,59 @@ import java.sql.SQLException;
 
 public class SpellDatabase
 {
-    private ArrayList<Spell> spells = new ArrayList<Spell>();
+
+    class FileHandler implements HttpHandler
+    {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException
+        {
+            System.out.println("Request received.");
+
+            exchange.getResponseHeaders().set("Content-Type", "text/plain");
+
+            OutputStream os = exchange.getResponseBody();
+
+            File dbFile = new File(dbFilename);
+            byte[] fileBytes = new byte[(int) dbFile.length()];
+            FileInputStream fis = new FileInputStream(dbFile);
+            fis.read(fileBytes);
+
+            exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, fileBytes.length);
+
+            os.write(fileBytes);
+            os.close();
+
+            System.out.println("Request handled successfulyy.");
+        }
+    }
+
     Connection connection;
+    int port = 9000;
+    String dbFilename = "spelldatabase.db";
 
     public SpellDatabase()
     {
         try {
             //To-Do: Set database url based on argument maybe?
-            connection = DriverManager.getConnection("jdbc:sqlite:spelldatabase.db");
+            connection = DriverManager.getConnection("jdbc:sqlite:" + dbFilename);
             createDatabase();
 
-            // ResultSet resultSet = statement.executeQuery("SELECT * FROM users");
-            // while(resultSet.next())
-            // {
-            //     int id = resultSet.getInt("id");
-            //     String username = resultSet.getString("username");
-            //     String email = resultSet.getString("email");
+            System.out.println("Connected to " + dbFilename + " successfully.");
 
-            //     System.out.println(id + " " + username + " " + email);
-            // }
 
-        } 
-        catch(SQLException e)
+            HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
+            server.createContext("/spelldb", new FileHandler());
+            server.start();
+
+            System.out.println("Server started on port " + port);
+
+
+        } catch(SQLException e)
         {
-            System.err.println("Caught SQLException");
+            System.err.println("Caught SQLException in connecting to the database file.");
+        } catch(IOException e)
+        {
+            System.err.println("Caught IOException in creating HttpServer.");
         }
     }
 
@@ -109,21 +149,6 @@ public class SpellDatabase
         {
             System.err.println("Unable to access database. Read failed.");
         }
-
-
-        // if(spells.size() == 0)
-        // {
-        //     System.err.println("Printing spells failed. Please populate with spells first.");
-        //     return;
-        // }
-        // StringBuilder sb = new StringBuilder();
-        // sb.append(spells.get(0).toString());
-        // for(int i = 1; i < spells.size(); i++)
-        // {
-        //     sb.append("\n\n");
-        //     sb.append(spells.get(i).toString());
-        // }
-        // System.out.println(sb.toString());
     }
 
     // Populate the database with every spell in the SRD
@@ -135,7 +160,6 @@ public class SpellDatabase
         for(int i = 0; i < 1; i++) 
         {
             Spell spell = getSpell(spellIndices[i]);
-            spells.add(spell);
             insertSpellIntoDatabase(spell);
         }
 

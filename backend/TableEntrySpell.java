@@ -54,7 +54,6 @@ public class TableEntrySpell
             sb.append(" (concentration)");
         }
         sb.append("\n");
-        //do classes
         sb.append("Classes: ");
         sb.append(this.classes);
         sb.append("\n");
