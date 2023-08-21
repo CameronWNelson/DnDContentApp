@@ -56,6 +56,7 @@ public class SpellDatabase
 
             os.write(fileBytes);
             os.close();
+            fis.close();
 
             System.out.println("Request handled successfulyy.");
         }
