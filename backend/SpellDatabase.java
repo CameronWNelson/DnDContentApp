@@ -50,14 +50,6 @@ public class SpellDatabase
 
             OutputStream os = exchange.getResponseBody();
 
-            String response = "You have connected successfully.";
-            t.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
-            t.sendResponseHeaders(200, response.getBytes().length);
-            os = t.getResponseBody();
-            os.write(response.getBytes());
-            os.close();
-
-            /* 
             File dbFile = new File(dbFilename);
             byte[] fileBytes = new byte[(int) dbFile.length()];
             FileInputStream fis = new FileInputStream(dbFile);
@@ -68,7 +60,6 @@ public class SpellDatabase
             os.write(fileBytes);
             os.close();
             fis.close();
-            */
 
             System.out.println("Request handled successfulyy.");
         }
