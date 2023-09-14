@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.concurrent.TimeUnit;
 
 import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.HttpHandler;
@@ -155,7 +156,7 @@ public class SpellDatabase
             return true;
         } catch(SQLException e)
         {
-            System.err.println("Unable to access database. Insert failed.");
+            System.err.println("Unable to access database. Failed to insert " + spell.getName());
             return false;
         }
         
@@ -184,10 +185,15 @@ public class SpellDatabase
         String[] spellIndices = fetchAllSpellIndices();
         
         // Only gets the first spell, change end condition to spellIndices.length to get all spells
-        for(int i = 0; i < 3; i++) 
+        for(int i = 0; i < spellIndices.length; i++) 
         {
             Spell spell = getSpell(spellIndices[i]);
             insertSpellIntoDatabase(spell);
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                System.err.println(e.getStackTrace());
+            }
         }
 
         //System.out.println(spells.get(0).getSpellToJson().toString());
@@ -305,6 +311,10 @@ public class SpellDatabase
             sd.emptyDatabase();
             sd.populateWithSpells();
         }
+
+        //Spell animalMessenger = getSpell("animal-messenger");
+        //String spellString = animalMessenger.toString();
+        //System.out.println(animalMessenger.toString());
 
         //sd.emptyDatabase();
         //sd.populateWithSpells();
