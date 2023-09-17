@@ -1,6 +1,7 @@
 import java.lang.StringBuilder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -133,7 +134,7 @@ public class SpellDatabase
         
         
 
-        String input = String.format("INSERT INTO spells (name, level, school, ritual, concentration, verbal, somatic, material, materialText, range, duration, castTime, spellText, classes, subclasses) VALUES (\"%s\", %d, \"%s\", %b, %b, %b, %b, %b, \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\")", 
+        String input = String.format("INSERT INTO spells (name, level, school, ritual, concentration, verbal, somatic, material, materialText, range, duration, castTime, spellText, classes, subclasses) VALUES (\"%s\", %d, \"%s\", %b, %b, %b, %b, %b, \"%s\", \"%s\", \"%s\", \"%s\", '\"%s\"'', \"%s\", \"%s\")", 
         dbSpell.name, dbSpell.level, dbSpell.school, dbSpell.ritual, dbSpell.concentration, dbSpell.components.hasVerbalComponents(), dbSpell.components.hasSomaticComponents(), dbSpell.components.hasMaterialComponents(), dbSpell.components.getMaterialComponentsText(), dbSpell.range, dbSpell.duration, dbSpell.castTime, dbSpell.spellText, dbSpell.classes, dbSpell.subclasses);
         try
         {
@@ -183,12 +184,19 @@ public class SpellDatabase
     public void populateWithSpells()
     {
         String[] spellIndices = fetchAllSpellIndices();
+        ArrayList<Spell> spells = new ArrayList<Spell>();
         
         // Only gets the first spell, change end condition to spellIndices.length to get all spells
         for(int i = 0; i < spellIndices.length; i++) 
         {
-            Spell spell = getSpell(spellIndices[i]);
-            insertSpellIntoDatabase(spell);
+            spells.add(getSpell(spellIndices[i]));
+        }
+
+        Collections.sort(spells);
+
+        for(int i = 0; i < spellIndices.length; i++)
+        {
+            insertSpellIntoDatabase(spells.get(i));
             try {
                 TimeUnit.SECONDS.sleep(1);
             } catch (InterruptedException e) {
