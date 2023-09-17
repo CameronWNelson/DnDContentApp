@@ -1,6 +1,7 @@
 import java.lang.StringBuilder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -183,12 +184,19 @@ public class SpellDatabase
     public void populateWithSpells()
     {
         String[] spellIndices = fetchAllSpellIndices();
+        ArrayList<Spell> spells = new ArrayList<Spell>();
         
         // Only gets the first spell, change end condition to spellIndices.length to get all spells
         for(int i = 0; i < spellIndices.length; i++) 
         {
-            Spell spell = getSpell(spellIndices[i]);
-            insertSpellIntoDatabase(spell);
+            spells.add(getSpell(spellIndices[i]));
+        }
+
+        Collections.sort(spells);
+
+        for(int i = 0; i < spellIndices.length; i++)
+        {
+            insertSpellIntoDatabase(spells.get(i));
             try {
                 TimeUnit.SECONDS.sleep(1);
             } catch (InterruptedException e) {
