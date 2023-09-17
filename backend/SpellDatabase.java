@@ -134,7 +134,7 @@ public class SpellDatabase
         
         
 
-        String input = String.format("INSERT INTO spells (name, level, school, ritual, concentration, verbal, somatic, material, materialText, range, duration, castTime, spellText, classes, subclasses) VALUES (\"%s\", %d, \"%s\", %b, %b, %b, %b, %b, \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\")", 
+        String input = String.format("INSERT INTO spells (name, level, school, ritual, concentration, verbal, somatic, material, materialText, range, duration, castTime, spellText, classes, subclasses) VALUES (\"%s\", %d, \"%s\", %b, %b, %b, %b, %b, \"%s\", \"%s\", \"%s\", \"%s\", '\"%s\"'', \"%s\", \"%s\")", 
         dbSpell.name, dbSpell.level, dbSpell.school, dbSpell.ritual, dbSpell.concentration, dbSpell.components.hasVerbalComponents(), dbSpell.components.hasSomaticComponents(), dbSpell.components.hasMaterialComponents(), dbSpell.components.getMaterialComponentsText(), dbSpell.range, dbSpell.duration, dbSpell.castTime, dbSpell.spellText, dbSpell.classes, dbSpell.subclasses);
         try
         {
