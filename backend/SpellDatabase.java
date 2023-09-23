@@ -132,10 +132,6 @@ public class SpellDatabase
 
         String query = "SELECT COUNT(*) FROM spells WHERE name = ?";
         
-        
-
-        String input = String.format("INSERT INTO spells (name, level, school, ritual, concentration, verbal, somatic, material, materialText, range, duration, castTime, spellText, classes, subclasses) VALUES (\"%s\", %d, \"%s\", %b, %b, %b, %b, %b, \"%s\", \"%s\", \"%s\", \"%s\", '\"%s\"'', \"%s\", \"%s\")", 
-        dbSpell.name, dbSpell.level, dbSpell.school, dbSpell.ritual, dbSpell.concentration, dbSpell.components.hasVerbalComponents(), dbSpell.components.hasSomaticComponents(), dbSpell.components.hasMaterialComponents(), dbSpell.components.getMaterialComponentsText(), dbSpell.range, dbSpell.duration, dbSpell.castTime, dbSpell.spellText, dbSpell.classes, dbSpell.subclasses);
         try
         {
             PreparedStatement queryStatement = connection.prepareStatement((query));
@@ -150,17 +146,37 @@ public class SpellDatabase
                     return false;
                 }
             }
-
-            Statement statement = connection.createStatement();
-            statement.execute(input);
-            System.out.println("Entry with name " + spell.getName() + " inserted successfully.");
-            return true;
         } catch(SQLException e)
         {
+            System.err.println("Unable to access database. Failed to query before insert " + spell.getName());
+            return false;
+        }
+        try {
+            // Insert the spell into the database
+            PreparedStatement insertionStatement = connection.prepareStatement("INSERT INTO spells (name, level, school, ritual, concentration, verbal, somatic, material, materialText, range, duration, castTime, spellText, classes, subclasses) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            insertionStatement.setString(1, dbSpell.name);
+            insertionStatement.setInt(2, dbSpell.level);
+            insertionStatement.setString(3, dbSpell.school);
+            insertionStatement.setBoolean(4, dbSpell.ritual);
+            insertionStatement.setBoolean(5, dbSpell.concentration);
+            insertionStatement.setBoolean(6, dbSpell.components.hasVerbalComponents());
+            insertionStatement.setBoolean(7, dbSpell.components.hasSomaticComponents());
+            insertionStatement.setBoolean(8, dbSpell.components.hasMaterialComponents());
+            insertionStatement.setString(9, dbSpell.components.getMaterialComponentsText());
+            insertionStatement.setString(10, dbSpell.range);
+            insertionStatement.setString(11, dbSpell.duration);
+            insertionStatement.setString(12, dbSpell.castTime);
+            insertionStatement.setString(13, dbSpell.spellText);
+            insertionStatement.setString(14, dbSpell.classes);
+            insertionStatement.setString(15, dbSpell.subclasses);
+            insertionStatement.executeUpdate();
+
+            System.out.println("Entry with name " + spell.getName() + " inserted successfully.");
+            return true;
+        } catch(SQLException e) {
             System.err.println("Unable to access database. Failed to insert " + spell.getName());
             return false;
         }
-        
     }
 
     // Print every spell in the database
@@ -190,6 +206,12 @@ public class SpellDatabase
         for(int i = 0; i < spellIndices.length; i++) 
         {
             spells.add(getSpell(spellIndices[i]));
+            System.out.println("Retrieved spell " + i + "/" + spellIndices.length);
+            try {
+                TimeUnit.MILLISECONDS.sleep(250);
+            } catch (InterruptedException e) {
+                System.err.println(e.getStackTrace());
+            }
         }
 
         Collections.sort(spells);
@@ -197,11 +219,6 @@ public class SpellDatabase
         for(int i = 0; i < spellIndices.length; i++)
         {
             insertSpellIntoDatabase(spells.get(i));
-            try {
-                TimeUnit.SECONDS.sleep(1);
-            } catch (InterruptedException e) {
-                System.err.println(e.getStackTrace());
-            }
         }
 
         //System.out.println(spells.get(0).getSpellToJson().toString());
@@ -324,8 +341,8 @@ public class SpellDatabase
         //String spellString = animalMessenger.toString();
         //System.out.println(animalMessenger.toString());
 
-        //sd.emptyDatabase();
-        //sd.populateWithSpells();
+        sd.emptyDatabase();
+        sd.populateWithSpells();
         //sd.printSpells();
 
 
