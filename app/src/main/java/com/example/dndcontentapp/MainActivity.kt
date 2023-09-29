@@ -1,20 +1,36 @@
 package com.example.dndcontentapp
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.widget.Button
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 class MainActivity : AppCompatActivity() {
-    var allSpells = mutableListOf<SpellData>()
+    private lateinit var spellRecyclerView : RecyclerView
+    private lateinit var allSpells : ArrayList<SpellData>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val dbManager = getDbManager(this)
         val database = dbManager.openDatabase()
+        allSpells = ArrayList<SpellData>()
 
-        // create a list of all the spells in the database
+        initializeSpellData(allSpells)
+
+        spellRecyclerView = findViewById(R.id.SpellRecyclerView)
+        spellRecyclerView.layoutManager = LinearLayoutManager(this)
+        spellRecyclerView.adapter = SpellRecyclerViewAdapter(allSpells)
+
+//        val alarmButton = findViewById<Button>(R.id.spellButton)
+//        alarmButton.setOnClickListener {
+//            Log.d("DOGGO", "ALARM pressed")
+//            val intent = Intent(this, SpellDetailsActivity::class.java)
+//            startActivity(intent)
+//        }
+    }
+
+    // create a list of all the spells in the database
+    private fun initializeSpellData(spells: ArrayList<SpellData>) {
         var spellCursor = dbManager.readableDatabase.rawQuery("SELECT * FROM spells", null)
         while (spellCursor.moveToNext()) {
             val name = spellCursor.getString(spellCursor.run { getColumnIndex("name") })
@@ -50,15 +66,8 @@ class MainActivity : AppCompatActivity() {
                 if (subclassString.contains(s.toString(), true))
                     subclass.add(s)
             }
-            allSpells.add(SpellData(name, level, school, ritual, concentration, component, range, duration, castTime, spellText, playerClass, subclass))
+            spells.add(SpellData(name, level, school, ritual, concentration, component, range, duration, castTime, spellText, playerClass, subclass))
         }
-
-//        val alarmButton = findViewById<Button>(R.id.spellButton)
-//        alarmButton.setOnClickListener {
-//            Log.d("DOGGO", "ALARM pressed")
-//            val intent = Intent(this, SpellDetailsActivity::class.java)
-//            startActivity(intent)
-//        }
     }
 
     // turn an int of 0 or 1 into a boolean

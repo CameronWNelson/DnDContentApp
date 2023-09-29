@@ -18,7 +18,7 @@ class SpellData (val name: String, val level: Int, val school: School, val ritua
             text += "${schoolToString(true)} cantrip"
         }
         else {
-            text += "${getLevelSuffix()}-level ${schoolToString(false)}"
+            text += "${levelToString()}-level ${schoolToString(false)}"
         }
         if (this.ritual) {
             text += " (ritual)"
@@ -39,18 +39,18 @@ class SpellData (val name: String, val level: Int, val school: School, val ritua
     }
 
     // returns the level of the spell with a suffix
-    fun getLevelSuffix(): String {
+    fun levelToString(): String {
         return when (this.level) {
             0 -> "cantrip"
-            1 -> "1st"
-            2 -> "2nd"
-            3 -> "3rd"
-            4 -> "4th"
-            5 -> "5th"
-            6 -> "6th"
-            7 -> "7th"
-            8 -> "8th"
-            9 -> "9th"
+            1 -> "1st level"
+            2 -> "2nd level"
+            3 -> "3rd level"
+            4 -> "4th level"
+            5 -> "5th level"
+            6 -> "6th level"
+            7 -> "7th level"
+            8 -> "8th level"
+            9 -> "9th level"
             else -> "error"
         }
     }
