@@ -20,13 +20,6 @@ class MainActivity : AppCompatActivity() {
         spellRecyclerView = findViewById(R.id.SpellRecyclerView)
         spellRecyclerView.layoutManager = LinearLayoutManager(this)
         spellRecyclerView.adapter = SpellRecyclerViewAdapter(allSpells)
-
-//        val alarmButton = findViewById<Button>(R.id.spellButton)
-//        alarmButton.setOnClickListener {
-//            Log.d("DOGGO", "ALARM pressed")
-//            val intent = Intent(this, SpellDetailsActivity::class.java)
-//            startActivity(intent)
-//        }
     }
 
     // create a list of all the spells in the database
@@ -43,41 +36,29 @@ class MainActivity : AppCompatActivity() {
                     break
                 }
             }
-            val ritual = intToBoolean(spellCursor.getInt(spellCursor.run { getColumnIndex("ritual") }))
-            val concentration = intToBoolean(spellCursor.getInt(spellCursor.run { getColumnIndex("concentration") }))
-            val verbal = intToBoolean(spellCursor.getInt(spellCursor.run { getColumnIndex("verbal") }))
-            val somatic = intToBoolean(spellCursor.getInt(spellCursor.run { getColumnIndex("somatic") }))
-            val material = intToBoolean(spellCursor.getInt(spellCursor.run { getColumnIndex("material") }))
+            val ritual = ExtraUtilities.intToBool(spellCursor.getInt(spellCursor.run { getColumnIndex("ritual") }))
+            val concentration = ExtraUtilities.intToBool(spellCursor.getInt(spellCursor.run { getColumnIndex("concentration") }))
+            val verbal = ExtraUtilities.intToBool(spellCursor.getInt(spellCursor.run { getColumnIndex("verbal") }))
+            val somatic = ExtraUtilities.intToBool(spellCursor.getInt(spellCursor.run { getColumnIndex("somatic") }))
+            val material = ExtraUtilities.intToBool(spellCursor.getInt(spellCursor.run { getColumnIndex("material") }))
             val materialText = spellCursor.getString(spellCursor.run { getColumnIndex("materialText") })
-            val component = Component (verbal, somatic, material, materialText)
             val range = spellCursor.getString(spellCursor.run { getColumnIndex("range") })
             val duration = spellCursor.getString(spellCursor.run { getColumnIndex("duration") })
             val castTime = spellCursor.getString(spellCursor.run { getColumnIndex("castTime") })
             val spellText = spellCursor.getString(spellCursor.run { getColumnIndex("spellText") })
-            var playerClass = mutableListOf<PlayerClass>()
+            var playerClass = ArrayList<PlayerClass>()
             val classesString = spellCursor.getString(spellCursor.run { getColumnIndex("classes") })
             for (pc in PlayerClass.values()) {
                 if (classesString.contains(pc.toString(), true))
                     playerClass.add(pc)
             }
-            var subclass = mutableListOf<Subclass>()
+            var subclass = ArrayList<Subclass>()
             val subclassString = spellCursor.getString(spellCursor.run { getColumnIndex("subclasses") })
             for (s in Subclass.values()) {
                 if (subclassString.contains(s.toString(), true))
                     subclass.add(s)
             }
-            spells.add(SpellData(name, level, school, ritual, concentration, component, range, duration, castTime, spellText, playerClass, subclass))
+            spells.add(SpellData(name, level, school, ritual, concentration, verbal, somatic, material, materialText, range, duration, castTime, spellText, playerClass, subclass))
         }
-    }
-
-    // turn an int of 0 or 1 into a boolean
-    fun intToBoolean(i: Int): Boolean {
-        if (i == 0) {
-            return false
-        }
-        if (i == 1) {
-            return true
-        }
-        throw IllegalArgumentException("$i cannot be converted to boolean, expected 0 or 1")
     }
 }

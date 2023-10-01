@@ -1,45 +1,83 @@
 package com.example.dndcontentapp
 
+import android.os.Parcel
+import android.os.Parcelable
 import java.util.Locale
 
-enum class School {ABJURATION, CONJURATION, DIVINATION, ENCHANTMENT, EVOCATION, ILLUSION, NECROMANCY, TRANSMUTATION, ERROR}
-enum class PlayerClass {ARTIFICER, BAR, CLERIC, DRUID, PALADIN, RANGER, SORCERER, WARLOCK, WIZARD, ERROR}
+enum class School {ABJURATION, CONJURATION, DIVINATION, ENCHANTMENT, EVOCATION, ILLUSION, NECROMANCY, TRANSMUTATION, ERROR }
+enum class PlayerClass {ARTIFICER, BARD, CLERIC, DRUID, PALADIN, RANGER, SORCERER, WARLOCK, WIZARD, ERROR}
 enum class Subclass {LORE, LAND, LIFE, FIEND, DEVOTION, ERROR}
-class Component (val verbal: Boolean, val somatic: Boolean, val material: Boolean, val materialItems: String) {}
+class SpellData (val name: String, val level: Int, val school: School, val ritual: Boolean, val concentration: Boolean, val verbal: Boolean, val somatic: Boolean, val material: Boolean, val materialText: String, val range: String, val duration: String, val castTime: String, val spellText: String, val playerClass: ArrayList<PlayerClass>, val subclass: ArrayList<Subclass>) : Parcelable {
 
-// playerClass is commented out for future use
-class SpellData (val name: String, val level: Int, val school: School, val ritual: Boolean, val concentration: Boolean, val components: Component, val range: String, val duration: String, val castTime: String, val spellText: String, val playerClass: List<PlayerClass>, val subclass: List<Subclass>){
+    constructor(parcel: Parcel) : this(
+        parcel.readString()!!,
+        parcel.readInt(),
+        School.values()[parcel.readInt()],
+        ExtraUtilities.intToBool(parcel.readInt()),
+        ExtraUtilities.intToBool(parcel.readInt()),
+        ExtraUtilities.intToBool(parcel.readInt()),
+        ExtraUtilities.intToBool(parcel.readInt()),
+        ExtraUtilities.intToBool(parcel.readInt()),
+        parcel.readString()!!,
+        parcel.readString()!!,
+        parcel.readString()!!,
+        parcel.readString()!!,
+        parcel.readString()!!,
+        ArrayList<PlayerClass>(),
+        ArrayList<Subclass>()
+    ) {
+        // convert from ints back into enums
+        val parcelPC = ArrayList<Int>()
+        parcel.readList(parcelPC, Int::class.java.classLoader)
+        for (item in parcelPC) {
+            playerClass.add(PlayerClass.values()[item])
+        }
+        val parcelSC = ArrayList<Int>()
+        parcel.readList(parcelSC, Int::class.java.classLoader)
+        for (item in parcelSC)
+            subclass.add(Subclass.values()[item])
+    }
 
-    // Temporary function to fit all the spell details in a single textView
-    override fun toString(): String {
-        var text: String = name + "\n"
-        if (this.level == 0) {
-            // Capitalize the school for cantrips since it comes first
-            text += "${schoolToString(true)} cantrip"
-        }
-        else {
-            text += "${levelToString()}-level ${schoolToString(false)}"
-        }
-        if (this.ritual) {
-            text += " (ritual)"
-        }
-        text += "\n"
-        text += "Casting Time: $castTime\n"
-        text += "Range: $range\n"
-        text += "Components: ${componentToString()}\n"
-        text += "Duration: "
-        if (concentration) text += "Concentration, up to "
-        text += "$duration\n"
-//        text += "Available For: "
-//        for (i in playerClass) {
-//            text += playerClass.indexOf(i).to
-//        }
-        text += "$spellText"
-        return text
+    override fun describeContents(): Int {
+        return 0
+    }
+    override fun writeToParcel(dest: Parcel, flags: Int) {
+        dest.writeString(name)
+        dest.writeInt(level)
+        dest.writeInt(school.ordinal)
+
+        // necessary to convert for older api versions
+        dest.writeInt(ExtraUtilities.boolToInt(ritual))
+        dest.writeInt(ExtraUtilities.boolToInt(concentration))
+        dest.writeInt(ExtraUtilities.boolToInt(verbal))
+        dest.writeInt(ExtraUtilities.boolToInt(somatic))
+        dest.writeInt(ExtraUtilities.boolToInt(material))
+        dest.writeString(materialText)
+
+        dest.writeString(range)
+        dest.writeString(duration)
+        dest.writeString(castTime)
+        dest.writeString(spellText)
+
+        // convert enums to ints for parcels
+        val pc = ArrayList<Int>()
+        for (i in playerClass)
+            pc.add(i.ordinal)
+        dest.writeList(pc)
+        val sc = ArrayList<Int>()
+        for (i in subclass)
+            sc.add(i.ordinal)
+        dest.writeList(sc)
+    }
+
+    // returns the level and school, formatted for display
+    fun levelAndSchoolToString(): String {
+        if (level == 0) return "${schoolToString(true)} ${levelToString()}"
+        return "${levelToString()} ${schoolToString(false)}"
     }
 
     // returns the level of the spell with a suffix
-    fun levelToString(): String {
+    private fun levelToString(): String {
         return when (this.level) {
             0 -> "cantrip"
             1 -> "1st level"
@@ -56,47 +94,37 @@ class SpellData (val name: String, val level: Int, val school: School, val ritua
     }
 
     // returns the text form of the school enum, can be capitalized
-    fun schoolToString (capital: Boolean): String {
+    private fun schoolToString (capital: Boolean): String {
         var returnVal = this.school.name.lowercase()
         if (capital) {
-//            return when (this.school) {
-//                School.ABJURATION -> "Abjuration"
-//                School.CONJURATION -> "Conjuration"
-//                School.DIVINATION -> "Divination"
-//                School.ENCHANTMENT -> "Enchantment"
-//                School.EVOCATION -> "Evocation"
-//                School.ILLUSION -> "Illusion"
-//                School.NECROMANCY -> "Necromancy"
-//                School.TRANSMUTATION -> "Transmutation"
-//            }
             // auto-generated by IDE to replace String.Capitalize()
             return returnVal.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
         }
-//        return when (this.school) {
-//            School.ABJURATION -> "abjuration"
-//            School.CONJURATION -> "conjuration"
-//            School.DIVINATION -> "divination"
-//            School.ENCHANTMENT -> "enchantment"
-//            School.EVOCATION -> "evocation"
-//            School.ILLUSION -> "illusion"
-//            School.NECROMANCY -> "necromancy"
-//            School.TRANSMUTATION -> "transmutation"
-//        }
         return returnVal
     }
 
     // returns the text form of the components
     fun componentToString (): String {
         var text: String = ""
-        if (components.verbal) text += "V"
-        if (components.somatic) {
+        if (verbal) text += "V"
+        if (somatic) {
             if (!text.contentEquals("")) text += ", "
             text += "S"
         }
-        if (components.material) {
+        if (material) {
             if (!text.contentEquals("")) text += ", "
-            text += "M (${components.materialItems})"
+            text += "M ($materialText)"
         }
         return text
+    }
+
+    companion object CREATOR : Parcelable.Creator<SpellData> {
+        override fun createFromParcel(parcel: Parcel): SpellData {
+            return SpellData(parcel)
+        }
+
+        override fun newArray(size: Int): Array<SpellData?> {
+            return arrayOfNulls(size)
+        }
     }
 }

@@ -1,9 +1,12 @@
 package com.example.dndcontentapp
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 
 class SpellRecyclerViewAdapter(private val spellList : ArrayList<SpellData>): RecyclerView.Adapter<SpellRecyclerViewAdapter.MyViewHolder>() {
@@ -19,12 +22,8 @@ class SpellRecyclerViewAdapter(private val spellList : ArrayList<SpellData>): Re
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val currentItem = spellList[position]
         holder.nameView.setText(currentItem.name)
-        if (currentItem.level == 0) {
-            holder.detailsView.setText("${currentItem.schoolToString(true)} ${currentItem.levelToString()}")
-        }
-        else {
-            holder.detailsView.setText("${currentItem.levelToString()} ${currentItem.schoolToString(false)}")
-        }
+        holder.detailsView.setText(currentItem.levelAndSchoolToString())
+        holder.spell = currentItem
     }
 
     override fun getItemCount(): Int {
@@ -35,5 +34,16 @@ class SpellRecyclerViewAdapter(private val spellList : ArrayList<SpellData>): Re
     class MyViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
         val nameView : TextView = itemView.findViewById(R.id.spellName)
         val detailsView : TextView = itemView.findViewById(R.id.spellDetails)
+        val spellRow : LinearLayout = itemView.findViewById(R.id.spellRow)
+        lateinit var spell: SpellData
+
+        init {
+            spellRow.setOnClickListener {
+                val intent = Intent(it.context, SpellDetailsActivity::class.java).apply {
+                    putExtra("Spell", spell)
+                }
+                it.context.startActivity(intent)
+            }
+        }
     }
 }
