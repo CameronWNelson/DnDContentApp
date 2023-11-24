@@ -21,8 +21,8 @@ class SpellRecyclerViewAdapter(private val spellList : ArrayList<SpellData>): Re
     // Assign the data for each spell to the appropriate view
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val currentItem = spellList[position]
-        holder.nameView.setText(currentItem.name)
-        holder.detailsView.setText(currentItem.levelAndSchoolToString())
+        holder.nameView.text = currentItem.name
+        holder.detailsView.text = currentItem.levelAndSchoolToString()
         holder.spell = currentItem
     }
 
