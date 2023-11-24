@@ -20,7 +20,6 @@ lateinit var dbManager: DatabaseManager
 
 class DatabaseManager(private val context: Context, private val dbName: String) : SQLiteOpenHelper(context, dbName, null, 1) {
     override fun onCreate(db: SQLiteDatabase?) {
-        TODO("Not yet implemented")
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
@@ -36,7 +35,7 @@ class DatabaseManager(private val context: Context, private val dbName: String) 
             val dbDownloader = DatabaseDownloader(context)
             runBlocking {
                 async(Dispatchers.IO) {
-                    dbDownloader.downloadAndSaveDatabase("http://192.168.0.193:9000/spelldb", dbName)
+                    dbDownloader.downloadAndSaveDatabase("http://associated-gr.at.ply.gg:53538/spelldb", dbName)
                 }
             }
         }
