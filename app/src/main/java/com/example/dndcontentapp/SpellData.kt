@@ -1,5 +1,6 @@
 package com.example.dndcontentapp
 
+import android.database.Cursor
 import android.os.Parcel
 import android.os.Parcelable
 import java.util.Locale
@@ -8,7 +9,6 @@ enum class School {ABJURATION, CONJURATION, DIVINATION, ENCHANTMENT, EVOCATION, 
 enum class PlayerClass {ARTIFICER, BARD, CLERIC, DRUID, PALADIN, RANGER, SORCERER, WARLOCK, WIZARD, ERROR}
 enum class Subclass {LORE, LAND, LIFE, FIEND, DEVOTION, ERROR}
 class SpellData (val name: String, val level: Int, val school: School, val ritual: Boolean, val concentration: Boolean, val verbal: Boolean, val somatic: Boolean, val material: Boolean, val materialText: String, val range: String, val duration: String, val castTime: String, val spellText: String, val playerClass: ArrayList<PlayerClass>, val subclass: ArrayList<Subclass>) : Parcelable {
-
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,
         parcel.readInt(),
@@ -118,6 +118,7 @@ class SpellData (val name: String, val level: Int, val school: School, val ritua
         return text
     }
 
+    // public methods to build new instances of SpellData using Parcels or Cursors
     companion object CREATOR : Parcelable.Creator<SpellData> {
         override fun createFromParcel(parcel: Parcel): SpellData {
             return SpellData(parcel)
@@ -125,6 +126,43 @@ class SpellData (val name: String, val level: Int, val school: School, val ritua
 
         override fun newArray(size: Int): Array<SpellData?> {
             return arrayOfNulls(size)
+        }
+
+        // Parse a database entry using cursor data
+        fun createFromCursor (cursor: Cursor): SpellData {
+            val name = cursor.getString(cursor.run { getColumnIndex("name") })
+            val level = cursor.getInt(cursor.run { getColumnIndex("level") })
+            val schoolString = cursor.getString(cursor.run { getColumnIndex("school") })
+            var school = School.ERROR
+            for (s in School.values()) {
+                if (schoolString.compareTo(s.toString(), true) == 0) {
+                    school = s
+                    break
+                }
+            }
+            val ritual = ExtraUtilities.intToBool(cursor.getInt(cursor.run { getColumnIndex("ritual") }))
+            val concentration = ExtraUtilities.intToBool(cursor.getInt(cursor.run { getColumnIndex("concentration") }))
+            val verbal = ExtraUtilities.intToBool(cursor.getInt(cursor.run { getColumnIndex("verbal") }))
+            val somatic = ExtraUtilities.intToBool(cursor.getInt(cursor.run { getColumnIndex("somatic") }))
+            val material = ExtraUtilities.intToBool(cursor.getInt(cursor.run { getColumnIndex("material") }))
+            val materialText = cursor.getString(cursor.run { getColumnIndex("materialText") })
+            val range = cursor.getString(cursor.run { getColumnIndex("range") })
+            val duration = cursor.getString(cursor.run { getColumnIndex("duration") })
+            val castTime = cursor.getString(cursor.run { getColumnIndex("castTime") })
+            val spellText = cursor.getString(cursor.run { getColumnIndex("spellText") })
+            var playerClass = ArrayList<PlayerClass>()
+            val classesString = cursor.getString(cursor.run { getColumnIndex("classes") })
+            for (pc in PlayerClass.values()) {
+                if (classesString.contains(pc.toString(), true))
+                    playerClass.add(pc)
+            }
+            var subclass = ArrayList<Subclass>()
+            val subclassString = cursor.getString(cursor.run { getColumnIndex("subclasses") })
+            for (s in Subclass.values()) {
+                if (subclassString.contains(s.toString(), true))
+                    subclass.add(s)
+            }
+            return SpellData(name, level, school, ritual, concentration, verbal, somatic, material, materialText, range, duration, castTime, spellText, playerClass, subclass)
         }
     }
 }
